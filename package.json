@@ -1,0 +1,44 @@
+{
+  "name": "@carnesen/aws",
+  "description": "Source code for deploying to AWS",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rm -rf lib && babel src --out-dir lib --ignore __tests__",
+    "lint": "eslint src",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint && npm run test:integration",
+    "test:integration": "mocha --opts test/mocha.opts",
+    "preversion": "npm test",
+    "version": "npm run build",
+    "postversion": "git push && git push --tags && npm publish"
+  },
+  "dependencies": {
+    "aws-sdk": "2.45.0",
+    "bluebird": "3.5.0"
+  },
+  "devDependencies": {
+    "babel-cli": "6.24.1",
+    "babel-core": "6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
+    "babel-plugin-transform-object-rest-spread": "6.23.0",
+    "babel-register": "6.24.1",
+    "chai": "3.5.0",
+    "eslint": "3.19.0",
+    "eslint-config-carnesen": "1.0.5",
+    "mocha": "3.3.0"
+  },
+  "author": {
+    "name": "Chris Arnesen",
+    "email": "chris.arnesen@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carnesen/node-aws.git"
+  },
+  "bugs": {
+    "url": "https://github.com/carnesen/node-aws/issues"
+  },
+  "homepage": "https://github.com/carnesen/node-aws",
+  "license": "MIT"
+}
