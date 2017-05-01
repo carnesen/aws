@@ -1,0 +1,7 @@
+{
+  "name": "@carnesen/foo",
+  "private": true,
+  "scripts": {
+    "build": "echo build script goes here"
+  }
+}

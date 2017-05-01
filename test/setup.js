@@ -1,4 +1,6 @@
 'use strict'
 
 require('babel-register')
-require('chai').should()
+const should = require('chai').should()
+
+global.should = should

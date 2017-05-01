@@ -1,3 +1,4 @@
 --require test/setup.js
 --recursive
 src/**/*-test.js
+--timeout 20000
