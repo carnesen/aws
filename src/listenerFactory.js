@@ -74,7 +74,7 @@ export default function listenerFactory (options = {}) {
     const loadBalancerArn = await loadBalancer.getArn()
     if (loadBalancerArn) {
       await loadBalancer.destroy()
-      await Promise.delay(2500)
+      await Promise.delay(3500)
     }
     const defaultTargetGroupArn = await defaultTargetGroup.getArn()
     if (defaultTargetGroupArn) {
