@@ -35,11 +35,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/carnesen/node-aws.git"
+    "url": "https://github.com/carnesen/aws.git"
   },
   "bugs": {
-    "url": "https://github.com/carnesen/node-aws/issues"
+    "url": "https://github.com/carnesen/aws/issues"
   },
-  "homepage": "https://github.com/carnesen/node-aws",
+  "homepage": "https://github.com/carnesen/aws",
   "license": "MIT"
 }
