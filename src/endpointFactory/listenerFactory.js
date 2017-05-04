@@ -1,9 +1,6 @@
-import Promise from 'bluebird'
 import keyMirror from 'keymirror'
 
-import loadBalancerFactory from './loadBalancerFactory'
-import defaultTargetGroupFactory from './defaultTargetGroupFactory'
-import {certificate, createLogger, elbv2, getEnvironmentName} from './util'
+import {certificate, createLogger, elbv2} from '../util'
 
 export const PROTOCOLS = keyMirror({
   HTTP: null,
@@ -11,14 +8,11 @@ export const PROTOCOLS = keyMirror({
 })
 
 export default function listenerFactory (options = {}) {
-  const {environmentName = getEnvironmentName(), protocol} = options
-
-  if (!protocol) {
-    throw new Error('Argument "protocol" is required')
-  }
-
-  const loadBalancer = loadBalancerFactory({environmentName})
-  const defaultTargetGroup = defaultTargetGroupFactory({environmentName})
+  const {
+    defaultTargetGroup,
+    loadBalancer,
+    protocol,
+  } = options
 
   const fullName = `${loadBalancer.fullName}-${protocol.toLowerCase()}`
   const log = createLogger('Listener', fullName)
@@ -39,16 +33,8 @@ export default function listenerFactory (options = {}) {
   }
 
   async function create () {
-    let loadBalancerArn = await loadBalancer.getArn()
-    if (!loadBalancerArn) {
-      await loadBalancer.create()
-      loadBalancerArn = await loadBalancer.getArn()
-    }
-    let defaultTargetGroupArn = await defaultTargetGroup.getArn()
-    if (!defaultTargetGroupArn) {
-      await defaultTargetGroup.create()
-      defaultTargetGroupArn = await defaultTargetGroup.getArn()
-    }
+    const loadBalancerArn = await loadBalancer.getArn()
+    const defaultTargetGroupArn = await defaultTargetGroup.getArn()
     log.creating()
     const arn = await getArn()
     if (arn) {
@@ -71,15 +57,6 @@ export default function listenerFactory (options = {}) {
   }
 
   async function destroy () {
-    const loadBalancerArn = await loadBalancer.getArn()
-    if (loadBalancerArn) {
-      await loadBalancer.destroy()
-      await Promise.delay(3500)
-    }
-    const defaultTargetGroupArn = await defaultTargetGroup.getArn()
-    if (defaultTargetGroupArn) {
-      await defaultTargetGroup.destroy()
-    }
     log.destroying()
     const arn = await getArn()
     if (arn) {

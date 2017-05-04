@@ -1,6 +1,7 @@
 import keyMirror from 'keymirror'
 
-import {createLogger, elbv2, getEnvironmentName, network} from './util'
+import network from '../network'
+import {createLogger, elbv2, getEnvironmentName} from '../util'
 
 const CODES = keyMirror({
   TargetGroupNotFound: null,

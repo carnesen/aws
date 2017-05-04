@@ -1,6 +1,8 @@
+import Promise from 'bluebird'
 import keyMirror from 'keymirror'
 
-import {createLogger, elbv2, getEnvironmentName, network} from './util'
+import network from '../network'
+import {createLogger, elbv2, getEnvironmentName} from '../util'
 
 const CODES = keyMirror({
   LoadBalancerNotFound: null,
@@ -53,11 +55,13 @@ export default function loadBalancerFactory (options = {}) {
     }
   }
 
+  // Note: Deleting the load balancer also deletes all attached listeners
   async function destroy () {
     log.destroying()
     const arn = await getArn()
     if (arn) {
       await elbv2.deleteLoadBalancerAsync({LoadBalancerArn: arn})
+      await Promise.delay(3500)
       log.destroyed()
     } else {
       log.alreadyDestroyed()

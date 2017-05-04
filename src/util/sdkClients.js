@@ -13,5 +13,6 @@ function createSdkClient (serviceInterfaceName, apiVersion) {
 export const acm = createSdkClient('ACM', '2015-12-08')
 export const ec2 = createSdkClient('EC2', '2016-11-15')
 export const ecr = createSdkClient('ECR', '2015-09-21')
+export const ecs = createSdkClient('ECS', '2014-11-13')
 export const elbv2 = createSdkClient('ELBv2', '2015-12-01')
-export const route53 = createSdkClient('Route53', '2013-04-01')
+export const iam = createSdkClient('IAM', '2010-05-08')

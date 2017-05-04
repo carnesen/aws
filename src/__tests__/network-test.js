@@ -9,5 +9,8 @@ describe(__filename, function () {
     subnetIds.forEach(function (subnetId) {
       subnetId.should.match(/^subnet-/)
     })
+    const securityGroupId = await network.getSecurityGroupId()
+    securityGroupId.should.match(/^sg-/)
+    await network.openPorts()
   })
 })

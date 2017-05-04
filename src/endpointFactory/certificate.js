@@ -1,5 +1,5 @@
 import {DOMAIN_NAME} from '../constants'
-import {acm} from './sdkClients'
+import {acm} from '../util'
 
 async function getArn () {
   const {CertificateSummaryList} = await acm.listCertificatesAsync()
