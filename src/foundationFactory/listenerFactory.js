@@ -9,32 +9,30 @@ export const PROTOCOLS = keyMirror({
 
 export default function listenerFactory (options = {}) {
   const {
-    defaultTargetGroup,
-    loadBalancer,
+    getDefaultTargetGroupArn,
+    getLoadBalancerArn,
+    name,
     protocol,
   } = options
 
-  const fullName = `${loadBalancer.fullName}-${protocol.toLowerCase()}`
-  const log = createLogger('Listener', fullName)
+  const log = createLogger('Listener', name)
 
   async function getArn () {
     let arn
-    const loadBalancerArn = await loadBalancer.getArn()
-    if (loadBalancerArn) {
-      const {Listeners} = await elbv2.describeListenersAsync({LoadBalancerArn: loadBalancerArn})
-      const filteredListeners = Listeners.filter(function ({Protocol}) {
-        return Protocol === protocol
-      })
-      if (filteredListeners.length > 0) {
-        arn = Listeners[0].ListenerArn
-      }
+    const loadBalancerArn = await getLoadBalancerArn()
+    const {Listeners} = await elbv2.describeListenersAsync({LoadBalancerArn: loadBalancerArn})
+    const filteredListeners = Listeners.filter(function ({Protocol}) {
+      return Protocol === protocol
+    })
+    if (filteredListeners.length > 0) {
+      arn = Listeners[0].ListenerArn
     }
     return arn
   }
 
   async function create () {
-    const loadBalancerArn = await loadBalancer.getArn()
-    const defaultTargetGroupArn = await defaultTargetGroup.getArn()
+    const loadBalancerArn = await getLoadBalancerArn()
+    const defaultTargetGroupArn = await getDefaultTargetGroupArn()
     log.creating()
     const arn = await getArn()
     if (arn) {
@@ -56,20 +54,10 @@ export default function listenerFactory (options = {}) {
     }
   }
 
-  async function destroy () {
-    log.destroying()
-    const arn = await getArn()
-    if (arn) {
-      await elbv2.deleteListenerAsync({ListenerArn: arn})
-      log.destroyed()
-    } else {
-      log.alreadyDestroyed()
-    }
-  }
+  // Destroying load balancer destroys attached listeners
 
   return {
     create,
-    destroy,
     getArn,
   }
 }

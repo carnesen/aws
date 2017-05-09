@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk'
 import Promise from 'bluebird'
 
-AWS.config.update({region: 'us-east-2'})
+import {REGION} from '../constants'
+
+AWS.config.update({region: REGION})
 
 function createSdkClient (serviceInterfaceName, apiVersion) {
   const ServiceInterface = AWS[serviceInterfaceName]
@@ -16,3 +18,4 @@ export const ecr = createSdkClient('ECR', '2015-09-21')
 export const ecs = createSdkClient('ECS', '2014-11-13')
 export const elbv2 = createSdkClient('ELBv2', '2015-12-01')
 export const iam = createSdkClient('IAM', '2010-05-08')
+export const cwl = createSdkClient('CloudWatchLogs', '2014-03-28')

@@ -1,31 +1,14 @@
-import instanceProfileFactory from './instanceProfileFactory'
-import keyPairFactory from './keyPairFactory'
-import network from '../network'
-import roleFactory from './roleFactory'
+import {ECS_OPTIMIZED_AMI_ID} from '../constants'
+import {createLogger, ec2, encodeBase64, network} from '../util'
 
-import {createLogger, ec2, encodeBase64, getEnvironmentName} from '../util'
-
-export default function instanceFactory (options = {}) {
-  const {cluster, environmentName = getEnvironmentName()} = options
-
-  const fullName = environmentName.toLowerCase()
-
-  const instanceProfile = instanceProfileFactory({environmentName})
-  const keyPair = keyPairFactory({environmentName})
-  const role = roleFactory({
-    environmentName,
-    name: 'instance',
-    trustedService: 'ec2.amazonaws.com',
-    policyArn: 'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role',
-  })
-
-  const log = createLogger('EC2 instance', fullName)
+export default function instanceFactory ({clusterName, getInstanceProfileArn, keyPairName, name}) {
+  const log = createLogger('EC2 instance', name)
 
   async function getId () {
     let id
     // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
     const {Reservations} = await ec2.describeInstancesAsync({
-      Filters: [{Name: 'tag:Name', Values: [fullName]}]
+      Filters: [{Name: 'tag:Name', Values: [name]}],
     })
     for (let reservation of Reservations) {
       const {Instances} = reservation
@@ -45,14 +28,10 @@ export default function instanceFactory (options = {}) {
     if (id) {
       log.alreadyCreated()
     } else {
-      await keyPair.create()
-      await role.create()
-      await instanceProfile.create()
-      await instanceProfile.attachRole(role.fullName)
-      const instanceProfileArn = await instanceProfile.getArn()
+      const instanceProfileArn = await getInstanceProfileArn()
       const securityGroupId = await network.getSecurityGroupId()
       await ec2.runInstancesAsync({
-        ImageId: 'ami-62745007',
+        ImageId: ECS_OPTIMIZED_AMI_ID,
         MaxCount: 1,
         MinCount: 1,
         BlockDeviceMappings: [
@@ -62,7 +41,7 @@ export default function instanceFactory (options = {}) {
               DeleteOnTermination: true,
               VolumeSize: 8,
               VolumeType: 'gp2',
-            }
+            },
           },
           {
             DeviceName: '/dev/xvdcz',
@@ -70,21 +49,21 @@ export default function instanceFactory (options = {}) {
               DeleteOnTermination: true,
               VolumeSize: 22,
               VolumeType: 'gp2',
-            }
+            },
           },
         ],
         DryRun: false,
         IamInstanceProfile: {Arn: instanceProfileArn},
         InstanceInitiatedShutdownBehavior: 'terminate',
         InstanceType: 't2.micro',
-        KeyName: keyPair.fullName,
+        KeyName: keyPairName,
         Monitoring: {Enabled: false},
         SecurityGroupIds: [securityGroupId],
         TagSpecifications: [{
           ResourceType: 'instance',
-          Tags: [{Key: 'Name', Value: fullName}]
+          Tags: [{Key: 'Name', Value: name}],
         }],
-        UserData: encodeBase64(`#!/bin/bash\necho ECS_CLUSTER=${cluster.fullName} >> /etc/ecs/ecs.config`)
+        UserData: encodeBase64(`#!/bin/bash\necho ECS_CLUSTER=${clusterName} >> /etc/ecs/ecs.config`),
       })
       log.created()
     }
@@ -96,7 +75,7 @@ export default function instanceFactory (options = {}) {
     if (!id) {
       log.alreadyDestroyed()
     } else {
-      await ec2.terminateInstancesAsync({InstanceIds:[id]})
+      await ec2.terminateInstancesAsync({InstanceIds: [id]})
       log.destroyed()
     }
   }
@@ -105,5 +84,6 @@ export default function instanceFactory (options = {}) {
     create,
     destroy,
     getId,
+    name,
   }
 }

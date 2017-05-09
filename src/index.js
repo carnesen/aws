@@ -1,2 +1,2 @@
-export {default as repositoryFactory} from './repositoryFactory'
+export {default as deploymentFactory} from './deploymentFactory'
 export {DOMAIN_NAME} from './constants'

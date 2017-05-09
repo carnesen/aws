@@ -1,21 +1,20 @@
 import keyMirror from 'keymirror'
 import Promise from 'bluebird'
 
-import {createLogger, getEnvironmentName, iam} from '../util'
+import createLogger from './createLogger'
+import {iam} from './sdkClients'
 
 const CODES = keyMirror({
   NoSuchEntity: null,
 })
 
-export default function roleFactory(options = {}) {
-  const {environmentName = getEnvironmentName(), name, trustedService, policyArn} = options
-  const fullName = `${name}-${environmentName.toLowerCase()}`
-  const log = createLogger('IAM role', fullName)
+export default function roleFactory ({name, trustedService, policyArn}) {
+  const log = createLogger('IAM role', name)
 
   async function getArn () {
     let arn
     try {
-      const {Role} = await iam.getRoleAsync({RoleName: fullName})
+      const {Role} = await iam.getRoleAsync({RoleName: name})
       arn = Role.Arn
     } catch (ex) {
       if (ex.code !== CODES.NoSuchEntity) {
@@ -37,16 +36,16 @@ export default function roleFactory(options = {}) {
           Effect: 'Allow',
           Principal: {'Service': trustedService},
           Action: 'sts:AssumeRole',
-        }]
+        }],
       }
       await iam.createRoleAsync({
-        RoleName: fullName,
-        AssumeRolePolicyDocument: JSON.stringify(document, null, 2)
+        RoleName: name,
+        AssumeRolePolicyDocument: JSON.stringify(document, null, 2),
       })
       await Promise.delay(1000)
     }
     await iam.attachRolePolicyAsync({
-      RoleName: fullName,
+      RoleName: name,
       PolicyArn: policyArn,
     })
     log.created()
@@ -58,18 +57,18 @@ export default function roleFactory(options = {}) {
     if (!arn) {
       log.alreadyDestroyed()
     } else {
-      const {AttachedPolicies} = await iam.listAttachedRolePoliciesAsync({RoleName: fullName})
+      const {AttachedPolicies} = await iam.listAttachedRolePoliciesAsync({RoleName: name})
       for (let {PolicyArn} of AttachedPolicies) {
-        await iam.detachRolePolicyAsync({RoleName: fullName, PolicyArn})
+        await iam.detachRolePolicyAsync({RoleName: name, PolicyArn})
       }
-      await iam.deleteRoleAsync({RoleName: fullName})
+      await iam.deleteRoleAsync({RoleName: name})
     }
   }
 
   return {
     create,
     destroy,
-    fullName,
     getArn,
+    name,
   }
 }

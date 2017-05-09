@@ -1,13 +1,11 @@
-import {ecs, createLogger, getEnvironmentName} from '../util'
+import {ecs, createLogger} from '../util'
 
-export default function clusterFactory (options = {}) {
-  const {environmentName = getEnvironmentName()} = options
-  const fullName = environmentName.toLowerCase()
-  const log = createLogger('ECS cluster', fullName)
+export default function clusterFactory ({name}) {
+  const log = createLogger('ECS cluster', name)
 
   async function getArn () {
     let arn
-    const {clusters} = await ecs.describeClustersAsync({clusters: [fullName]})
+    const {clusters} = await ecs.describeClustersAsync({clusters: [name]})
     if (clusters[0]) {
       if (clusters[0].status === 'ACTIVE') {
         arn = clusters[0].clusterArn
@@ -23,7 +21,7 @@ export default function clusterFactory (options = {}) {
       log.alreadyCreated()
     } else {
       // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/ECS.html#createCluster-property
-      await ecs.createClusterAsync({clusterName: fullName})
+      await ecs.createClusterAsync({clusterName: name})
       log.created()
     }
   }
@@ -35,14 +33,14 @@ export default function clusterFactory (options = {}) {
       log.alreadyDestroyed()
     } else {
       // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/ECS.html#deleteCluster-property
-      await ecs.deleteClusterAsync({cluster: fullName})
+      await ecs.deleteClusterAsync({cluster: name})
     }
   }
 
   return {
     create,
     destroy,
-    fullName,
     getArn,
+    name,
   }
 }

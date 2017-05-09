@@ -1,26 +1,18 @@
 import keyMirror from 'keymirror'
 
-import network from '../network'
-import {createLogger, elbv2, getEnvironmentName} from '../util'
+import {createLogger, elbv2, network} from '../util'
 
 const CODES = keyMirror({
   TargetGroupNotFound: null,
 })
 
-export default function targetGroupFactory (options = {}) {
-  const {environmentName = getEnvironmentName(), name} = options
-
-  if (!name) {
-    throw new Error('Argument "name" is required')
-  }
-
-  const fullName = `${environmentName.toLowerCase()}-${name}`
-  const log = createLogger('Target group', fullName)
+export default function targetGroupFactory ({name}) {
+  const log = createLogger('Target group', name)
 
   async function getArn () {
     let arn
     try {
-      const {TargetGroups} = await elbv2.describeTargetGroupsAsync({Names: [fullName]})
+      const {TargetGroups} = await elbv2.describeTargetGroupsAsync({Names: [name]})
       arn = TargetGroups[0].TargetGroupArn
     } catch (ex) {
       if (ex.code !== CODES.TargetGroupNotFound) {
@@ -36,12 +28,12 @@ export default function targetGroupFactory (options = {}) {
     if (arn) {
       log.alreadyCreated()
     } else {
-      const networkId = await network.getId()
+      const vpcId = await network.getId()
       await elbv2.createTargetGroupAsync({
-        Name: fullName,
+        Name: name,
         Protocol: 'HTTP',
-        Port: 80, // Overridden when ECS registers targets
-        VpcId: networkId,
+        Port: 8000, // overridden when service registers
+        VpcId: vpcId,
         HealthCheckProtocol: 'HTTP',
         HealthCheckPort: 'traffic-port',
         HealthCheckPath: '/health',

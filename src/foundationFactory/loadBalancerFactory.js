@@ -1,25 +1,20 @@
 import Promise from 'bluebird'
 import keyMirror from 'keymirror'
 
-import network from '../network'
-import {createLogger, elbv2, getEnvironmentName} from '../util'
+import {createLogger, elbv2, network} from '../util'
 
 const CODES = keyMirror({
   LoadBalancerNotFound: null,
 })
 
-export default function loadBalancerFactory (options = {}) {
-  const {environmentName = getEnvironmentName()} = options
-
-  const fullName = environmentName.toLowerCase()
-
-  const log = createLogger('Application load balancer', fullName)
+export default function loadBalancerFactory ({name}) {
+  const log = createLogger('Application load balancer', name)
 
   // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/ELBv2.html#describeLoadBalancers-property
   async function describe () {
     let description
     try {
-      const {LoadBalancers} = await elbv2.describeLoadBalancersAsync({Names: [fullName]})
+      const {LoadBalancers} = await elbv2.describeLoadBalancersAsync({Names: [name]})
       description = LoadBalancers[0]
     } catch (ex) {
       if (ex.code !== CODES.LoadBalancerNotFound) {
@@ -46,7 +41,7 @@ export default function loadBalancerFactory (options = {}) {
     } else {
       const subnetIds = await network.getSubnetIds()
       await elbv2.createLoadBalancerAsync({
-        Name: fullName,
+        Name: name,
         Subnets: subnetIds,
         Scheme: 'internet-facing',
         IpAddressType: 'ipv4',
@@ -61,7 +56,9 @@ export default function loadBalancerFactory (options = {}) {
     const arn = await getArn()
     if (arn) {
       await elbv2.deleteLoadBalancerAsync({LoadBalancerArn: arn})
-      await Promise.delay(3500)
+      const intervalSeconds = 6
+      log(`Waiting ${intervalSeconds} seconds for load balancer to be fully destroyed`)
+      await Promise.delay(intervalSeconds * 1000)
       log.destroyed()
     } else {
       log.alreadyDestroyed()
@@ -71,7 +68,7 @@ export default function loadBalancerFactory (options = {}) {
   return {
     create,
     destroy,
-    fullName,
+    name,
     getArn,
   }
 }

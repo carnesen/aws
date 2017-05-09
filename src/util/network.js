@@ -1,11 +1,12 @@
 import keyMirror from 'keymirror'
 
-import {createLogger, ec2} from './util'
+import createLogger from './createLogger'
+import {ec2} from './sdkClients'
 
 const log = createLogger('VPC network', 'default')
 
 const CODES = keyMirror({
-  'InvalidPermission.Duplicate': null
+  'InvalidPermission.Duplicate': null,
 })
 
 async function getId () {
@@ -36,11 +37,11 @@ async function getSecurityGroupId () {
     Filters: [
       {
         Name: 'vpc-id',
-        Values: [networkId]
+        Values: [networkId],
       },
       {
         Name: 'group-name',
-        Values: ['default']
+        Values: ['default'],
       },
     ],
   })
@@ -59,9 +60,9 @@ async function openPort (portNumber) {
           IpProtocol: 'tcp',
           FromPort: portNumber,
           ToPort: portNumber,
-          IpRanges: [{CidrIp: '0.0.0.0/0'}]
+          IpRanges: [{CidrIp: '0.0.0.0/0'}],
         },
-      ]
+      ],
     })
   } catch (ex) {
     if (ex.code !== CODES['InvalidPermission.Duplicate']) {

@@ -2,7 +2,7 @@ import clusterFactory from '../clusterFactory'
 
 describe(__filename, function () {
   it('does the right thing', async function () {
-    const cluster = clusterFactory()
+    const cluster = clusterFactory({name: 'foo'})
     await cluster.destroy()
     let arn
     arn = await cluster.getArn()

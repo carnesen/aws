@@ -3,23 +3,19 @@ import path from 'path'
 import expandHomeDir from 'expand-home-dir'
 import keyMirror from 'keymirror'
 
+import {createLogger, ec2, fs} from '../util'
+
 const CODES = keyMirror({
   'InvalidKeyPair.NotFound': null,
 })
 
-import {createLogger, ec2, fs, getEnvironmentName} from '../util'
-
-export default function keyPairFactory (options = {}) {
-  const {environmentName = getEnvironmentName()} = options
-
-  const fullName = environmentName.toLowerCase()
-
-  const log = createLogger('EC2 key pair', fullName)
+export default function keyPairFactory ({name}) {
+  const log = createLogger('EC2 key pair', name)
 
   async function getFingerprint () {
     let fingerprint
     try {
-      const {KeyPairs} = await ec2.describeKeyPairsAsync({KeyNames: [fullName]})
+      const {KeyPairs} = await ec2.describeKeyPairsAsync({KeyNames: [name]})
       fingerprint = KeyPairs[0].KeyFingerprint
     } catch (ex) {
       if (ex.code !== CODES['InvalidKeyPair.NotFound']) {
@@ -33,11 +29,11 @@ export default function keyPairFactory (options = {}) {
     const fingerprint = await getFingerprint()
     log.creating()
     if (!fingerprint) {
-      const {KeyMaterial} = await ec2.createKeyPairAsync({KeyName: fullName, DryRun: false})
+      const {KeyMaterial} = await ec2.createKeyPairAsync({KeyName: name, DryRun: false})
       const homeDir = expandHomeDir('~')
       const sshDir = path.join(homeDir, '.ssh')
       await fs.ensureDirAsync(sshDir)
-      const file = path.join(sshDir, `${fullName}.id_rsa`)
+      const file = path.join(sshDir, `${name}.id_rsa`)
       await fs.removeAsync(file)
       await fs.writeFileAsync(file, KeyMaterial, {mode: 600})
       log.created()
@@ -50,7 +46,7 @@ export default function keyPairFactory (options = {}) {
     const fingerprint = await getFingerprint()
     log.destroying()
     if (fingerprint) {
-      await ec2.deleteKeyPairAsync({KeyName: fullName})
+      await ec2.deleteKeyPairAsync({KeyName: name})
       log.destroyed()
     } else {
       log.alreadyDestroyed()
@@ -60,7 +56,7 @@ export default function keyPairFactory (options = {}) {
   return {
     create,
     destroy,
-    fullName,
     getFingerprint,
+    name,
   }
 }
