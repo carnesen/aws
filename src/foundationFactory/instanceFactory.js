@@ -1,3 +1,4 @@
+'use strict'
 const {ECS_OPTIMIZED_AMI_ID} = require('../constants')
 const {createLogger, ec2, encodeBase64, network} = require('../util')
 

@@ -1,3 +1,4 @@
+'use strict'
 const {CONTAINER_NAME, CONTAINER_PORT} = require('../constants')
 const {createLogger, ecs} = require('../util')
 

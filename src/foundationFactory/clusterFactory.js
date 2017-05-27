@@ -1,3 +1,4 @@
+'use strict'
 const {ecs, createLogger} = require('../util')
 
 module.exports = function clusterFactory ({name}) {

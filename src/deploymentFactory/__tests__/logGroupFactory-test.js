@@ -1,3 +1,4 @@
+'use strict'
 const logGroupFactory = require('../logGroupFactory')
 
 describe(__filename, function () {

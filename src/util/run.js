@@ -1,3 +1,4 @@
+'use strict'
 const {echo} = require('./logging')
 
 module.exports = async function run (func) {

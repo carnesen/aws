@@ -1,3 +1,4 @@
+'use strict'
 const certificate = require('../certificate')
 
 describe(__filename, function () {

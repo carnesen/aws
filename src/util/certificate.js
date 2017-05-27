@@ -1,3 +1,4 @@
+'use strict'
 const {DOMAIN_NAME} = require('../constants')
 const {acm} = require('./sdkClients')
 

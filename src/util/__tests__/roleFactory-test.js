@@ -1,3 +1,4 @@
+'use strict'
 const roleFactory = require('../roleFactory')
 
 describe(__filename, function () {

@@ -1,3 +1,4 @@
+'use strict'
 const clusterFactory = require('../clusterFactory')
 
 describe(__filename, function () {

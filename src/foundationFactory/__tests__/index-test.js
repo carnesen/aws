@@ -1,3 +1,4 @@
+'use strict'
 const foundationFactory = require('../index')
 
 const foundation = foundationFactory()

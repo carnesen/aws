@@ -1,3 +1,4 @@
+'use strict'
 const instanceProfileFactory = require('../instanceProfileFactory')
 
 describe(__filename, function () {

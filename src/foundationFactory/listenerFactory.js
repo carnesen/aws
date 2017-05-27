@@ -1,3 +1,4 @@
+'use strict'
 const keyMirror = require('keymirror')
 
 const {certificate, createLogger, elbv2} = require('../util')

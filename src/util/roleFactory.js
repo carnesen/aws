@@ -1,3 +1,4 @@
+'use strict'
 const keyMirror = require('keymirror')
 const Promise = require('bluebird')
 

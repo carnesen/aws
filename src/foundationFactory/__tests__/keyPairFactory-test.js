@@ -1,3 +1,4 @@
+'use strict'
 const keyPairFactory = require('../keyPairFactory')
 
 describe(__filename, function () {

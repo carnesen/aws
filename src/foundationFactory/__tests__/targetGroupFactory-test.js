@@ -1,3 +1,4 @@
+'use strict'
 const targetGroupFactory = require('../targetGroupFactory')
 
 describe(__filename, function () {

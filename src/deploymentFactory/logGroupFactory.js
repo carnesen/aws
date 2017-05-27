@@ -1,3 +1,4 @@
+'use strict'
 const {createLogger, cwl} = require('../util')
 
 module.exports = function logGroupFactory ({name}) {

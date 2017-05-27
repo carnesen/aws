@@ -1,3 +1,4 @@
+'use strict'
 const clusterFactory = require('./clusterFactory')
 const instanceFactory = require('./instanceFactory')
 const instanceProfileFactory = require('./instanceProfileFactory')

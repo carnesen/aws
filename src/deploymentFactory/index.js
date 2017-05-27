@@ -1,3 +1,4 @@
+'use strict'
 const foundationFactory = require('../foundationFactory')
 const logGroupFactory = require('./logGroupFactory')
 const repositoryFactory = require('./repositoryFactory')

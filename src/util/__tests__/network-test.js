@@ -1,3 +1,4 @@
+'use strict'
 const network = require('../network')
 
 describe(__filename, function () {
