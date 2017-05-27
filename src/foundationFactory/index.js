@@ -37,6 +37,7 @@ export default function foundationFactory (options = {}) {
   })
 
   async function create () {
+    console.log('asd')
     await serviceRole.create()
     await cluster.create()
     await instanceProfile.create()

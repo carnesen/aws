@@ -15,6 +15,7 @@ describe(__filename, function () {
     await repository.create() // is idempotent
     uri = await repository.getUri()
     uri.should.match(/ecr/)
+    await repository.buildImage({force: true})
     await repository.pushImage()
     await repository.pushImage()
     await repository.pushImage({force: true})

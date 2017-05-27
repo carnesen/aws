@@ -3,9 +3,10 @@ import Promise from 'bluebird'
 import {ENVIRONMENT_NAMES} from '../constants'
 
 export {default as certificate} from './certificate'
-export {default as createLogger} from './createLogger'
+export * from './logging'
 export {default as network} from './network'
 export {default as roleFactory} from './roleFactory'
+export {default as run} from './run'
 export * from './sdkClients'
 
 Promise.promisifyAll(fs)

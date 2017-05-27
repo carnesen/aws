@@ -1,8 +1,8 @@
-function echo (...args) {
+export function echo (...args) {
   console.log(...args) // eslint-disable-line no-console
 }
 
-export default function createLogger (description, fullName) {
+export function createLogger (description, fullName) {
   function createLog (...args) {
     return function (...extraArgs) {
       echo(`${description} "${fullName}":`, ...args, ...extraArgs)
