@@ -1,4 +1,4 @@
-import roleFactory from '../roleFactory'
+const roleFactory = require('../roleFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

@@ -1,11 +1,11 @@
-import foundationFactory from '../foundationFactory'
-import logGroupFactory from './logGroupFactory'
-import repositoryFactory from './repositoryFactory'
-import taskDefinitionFactory from './taskDefinitionFactory'
-import serviceFactory from './serviceFactory'
-import {getEnvironmentName} from '../util'
+const foundationFactory = require('../foundationFactory')
+const logGroupFactory = require('./logGroupFactory')
+const repositoryFactory = require('./repositoryFactory')
+const taskDefinitionFactory = require('./taskDefinitionFactory')
+const serviceFactory = require('./serviceFactory')
+const {getEnvironmentName} = require('../util')
 
-export default function deploymentFactory ({environmentName = getEnvironmentName(), packageDir = process.cwd()}) {
+module.exports = function deploymentFactory ({environmentName = getEnvironmentName(), packageDir = process.cwd()}) {
   const {
     clusterName,
     getServiceRoleArn,

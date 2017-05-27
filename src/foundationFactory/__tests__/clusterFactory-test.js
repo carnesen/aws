@@ -1,4 +1,4 @@
-import clusterFactory from '../clusterFactory'
+const clusterFactory = require('../clusterFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

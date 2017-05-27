@@ -1,14 +1,16 @@
-import clusterFactory from './clusterFactory'
-import instanceFactory from './instanceFactory'
-import instanceProfileFactory from './instanceProfileFactory'
-import keyPairFactory from './keyPairFactory'
-import listenerFactory, {PROTOCOLS} from './listenerFactory'
-import loadBalancerFactory from './loadBalancerFactory'
-import targetGroupFactory from './targetGroupFactory'
+const clusterFactory = require('./clusterFactory')
+const instanceFactory = require('./instanceFactory')
+const instanceProfileFactory = require('./instanceProfileFactory')
+const keyPairFactory = require('./keyPairFactory')
+const listenerFactory = require('./listenerFactory')
+const loadBalancerFactory = require('./loadBalancerFactory')
+const targetGroupFactory = require('./targetGroupFactory')
 
-import {getEnvironmentName, roleFactory} from '../util'
+const {getEnvironmentName, roleFactory} = require('../util')
 
-export default function foundationFactory (options = {}) {
+const {PROTOCOLS} = listenerFactory
+
+module.exports = function foundationFactory (options = {}) {
   const {environmentName = getEnvironmentName()} = options
   const cluster = clusterFactory({name: environmentName})
   const instanceProfile = instanceProfileFactory({name: environmentName})

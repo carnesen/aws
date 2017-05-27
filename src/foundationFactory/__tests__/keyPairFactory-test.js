@@ -1,4 +1,4 @@
-import keyPairFactory from '../keyPairFactory'
+const keyPairFactory = require('../keyPairFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

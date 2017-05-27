@@ -2,10 +2,8 @@
   "name": "@carnesen/aws",
   "description": "Source code for deploying to AWS",
   "version": "0.0.1",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib --ignore __tests__",
-    "build:watch": "npm run build -- --watch",
     "lint": "eslint src",
     "lint:fix": "npm run lint -- --fix",
     "test": "npm run lint && npm run test:integration",
@@ -22,11 +20,6 @@
     "keymirror": "0.1.1"
   },
   "devDependencies": {
-    "babel-cli": "6.24.1",
-    "babel-core": "6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
-    "babel-plugin-transform-object-rest-spread": "6.23.0",
-    "babel-register": "6.24.1",
     "chai": "3.5.0",
     "eslint": "3.19.0",
     "eslint-config-carnesen": "1.0.6",

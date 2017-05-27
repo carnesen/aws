@@ -1,6 +1,6 @@
-import path from 'path'
+const path = require('path')
 
-import repositoryFactory from '../repositoryFactory'
+const repositoryFactory = require('../repositoryFactory')
 
 const packageDir = path.join(__dirname, 'test-package')
 

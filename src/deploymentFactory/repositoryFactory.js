@@ -1,18 +1,18 @@
-import childProcess from 'child_process'
-import fs from 'fs'
-import path from 'path'
+const childProcess = require('child_process')
+const fs = require('fs')
+const path = require('path')
 
-import keyMirror from 'keymirror'
-import Promise from 'bluebird'
+const keyMirror = require('keymirror')
+const Promise = require('bluebird')
 
-import {createLogger, ecr} from '../util'
+const {createLogger, ecr} = require('../util')
 
 const CODES = keyMirror({
   ImageNotFoundException: null,
   RepositoryNotFoundException: null,
 })
 
-export default function repositoryFactory ({packageDir}) {
+module.exports = function repositoryFactory ({packageDir}) {
   const jsonFile = path.join(packageDir, 'package.json')
   const {name, scripts} = JSON.parse(fs.readFileSync(jsonFile, {encoding: 'utf8'}))
 

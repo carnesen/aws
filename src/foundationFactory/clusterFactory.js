@@ -1,6 +1,6 @@
-import {ecs, createLogger} from '../util'
+const {ecs, createLogger} = require('../util')
 
-export default function clusterFactory ({name}) {
+module.exports = function clusterFactory ({name}) {
   const log = createLogger('ECS cluster', name)
 
   async function getArn () {

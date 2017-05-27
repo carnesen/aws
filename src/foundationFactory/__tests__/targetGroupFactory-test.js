@@ -1,4 +1,4 @@
-import targetGroupFactory from '../targetGroupFactory'
+const targetGroupFactory = require('../targetGroupFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

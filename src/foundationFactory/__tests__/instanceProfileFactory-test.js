@@ -1,4 +1,4 @@
-import instanceProfileFactory from '../instanceProfileFactory'
+const instanceProfileFactory = require('../instanceProfileFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

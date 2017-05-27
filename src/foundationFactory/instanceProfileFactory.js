@@ -1,14 +1,14 @@
-import Promise from 'bluebird'
-import keyMirror from 'keymirror'
+const Promise = require('bluebird')
+const keyMirror = require('keymirror')
 
-import {createLogger, iam, roleFactory} from '../util'
+const {createLogger, iam, roleFactory} = require('../util')
 
 const CODES = keyMirror({
   LimitExceeded: null,
   NoSuchEntity: null,
 })
 
-export default function instanceProfileFactory ({name}) {
+module.exports = function instanceProfileFactory ({name}) {
   const log = createLogger('EC2 instance profile', name)
 
   const role = roleFactory({

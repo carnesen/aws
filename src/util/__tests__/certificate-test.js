@@ -1,4 +1,4 @@
-import certificate from '../certificate'
+const certificate = require('../certificate')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

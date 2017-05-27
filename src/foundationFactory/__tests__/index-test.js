@@ -1,4 +1,4 @@
-import foundationFactory from '../index'
+const foundationFactory = require('../index')
 
 const foundation = foundationFactory()
 

@@ -1,5 +1,5 @@
-import {DOMAIN_NAME} from '../constants'
-import {acm} from './sdkClients'
+const {DOMAIN_NAME} = require('../constants')
+const {acm} = require('./sdkClients')
 
 async function getArn () {
   const {CertificateSummaryList} = await acm.listCertificatesAsync()
@@ -9,6 +9,6 @@ async function getArn () {
   return CertificateArn
 }
 
-export default {
+module.exports = {
   getArn,
 }

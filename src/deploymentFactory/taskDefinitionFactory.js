@@ -1,5 +1,5 @@
-import {CONTAINER_NAME, CONTAINER_PORT, REGION} from '../constants'
-import {createLogger, ecs} from '../util'
+const {CONTAINER_NAME, CONTAINER_PORT, REGION} = require('../constants')
+const {createLogger, ecs} = require('../util')
 
 function getRandomUid () {
   const min = 1000000
@@ -7,7 +7,7 @@ function getRandomUid () {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
-export default function taskDefinitionFactory (options = {}) {
+module.exports = function taskDefinitionFactory (options = {}) {
   const {
     name,
     getImageName,

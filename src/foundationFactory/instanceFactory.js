@@ -1,7 +1,7 @@
-import {ECS_OPTIMIZED_AMI_ID} from '../constants'
-import {createLogger, ec2, encodeBase64, network} from '../util'
+const {ECS_OPTIMIZED_AMI_ID} = require('../constants')
+const {createLogger, ec2, encodeBase64, network} = require('../util')
 
-export default function instanceFactory ({clusterName, getInstanceProfileArn, keyPairName, name}) {
+module.exports = function instanceFactory ({clusterName, getInstanceProfileArn, keyPairName, name}) {
   const log = createLogger('EC2 instance', name)
 
   async function getId () {

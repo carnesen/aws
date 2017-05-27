@@ -1,11 +1,11 @@
-import {echo} from './logging'
+const {echo} = require('./logging')
 
-export default async function run(func) {
+module.exports = async function run (func) {
   console.log(func)
   try {
     const value = await func()
     if (value) {
-      console.log(value) //eslint-disable-line no-console
+      console.log(value) // eslint-disable-line no-console
     } else {
       echo('Success :)')
     }

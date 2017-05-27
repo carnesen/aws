@@ -1,15 +1,15 @@
-import path from 'path'
+const path = require('path')
 
-import expandHomeDir from 'expand-home-dir'
-import keyMirror from 'keymirror'
+const expandHomeDir = require('expand-home-dir')
+const keyMirror = require('keymirror')
 
-import {createLogger, ec2, fs} from '../util'
+const {createLogger, ec2, fs} = require('../util')
 
 const CODES = keyMirror({
   'InvalidKeyPair.NotFound': null,
 })
 
-export default function keyPairFactory ({name}) {
+module.exports = function keyPairFactory ({name}) {
   const log = createLogger('EC2 key pair', name)
 
   async function getFingerprint () {

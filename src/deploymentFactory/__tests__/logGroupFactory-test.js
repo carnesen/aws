@@ -1,4 +1,4 @@
-import logGroupFactory from '../logGroupFactory'
+const logGroupFactory = require('../logGroupFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

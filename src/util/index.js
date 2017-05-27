@@ -1,22 +1,19 @@
-import fs from 'fs-extra'
-import Promise from 'bluebird'
-import {ENVIRONMENT_NAMES} from '../constants'
+const Promise = require('bluebird')
+const {ENVIRONMENT_NAMES} = require('../constants')
 
-export {default as certificate} from './certificate'
-export * from './logging'
-export {default as network} from './network'
-export {default as roleFactory} from './roleFactory'
-export {default as run} from './run'
-export * from './sdkClients'
-
-Promise.promisifyAll(fs)
-
-export {fs}
-
-export function getEnvironmentName () {
-  return ENVIRONMENT_NAMES.devops
+module.exports = {
+  fs: Promise.promisifyAll(require('fs-extra')),
+  certificate: require('./certificate'),
+  encodeBase64 (str) {
+    return Buffer.from(str).toString('base64')
+  },
+  getEnvironmentName () {
+    return ENVIRONMENT_NAMES.devops
+  },
+  network: require('./network'),
+  roleFactory: require('./roleFactory'),
+  run: require('./run'),
 }
 
-export function encodeBase64 (str) {
-  return Buffer.from(str).toString('base64')
-}
+Object.assign(module.exports, require('./logging'))
+Object.assign(module.exports, require('./sdkClients'))

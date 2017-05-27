@@ -1,13 +1,13 @@
-import Promise from 'bluebird'
-import keyMirror from 'keymirror'
+const Promise = require('bluebird')
+const keyMirror = require('keymirror')
 
-import {createLogger, elbv2, network} from '../util'
+const {createLogger, elbv2, network} = require('../util')
 
 const CODES = keyMirror({
   LoadBalancerNotFound: null,
 })
 
-export default function loadBalancerFactory ({name}) {
+module.exports = function loadBalancerFactory ({name}) {
   const log = createLogger('Application load balancer', name)
 
   // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/ELBv2.html#describeLoadBalancers-property

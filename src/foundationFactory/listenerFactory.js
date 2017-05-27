@@ -1,13 +1,13 @@
-import keyMirror from 'keymirror'
+const keyMirror = require('keymirror')
 
-import {certificate, createLogger, elbv2} from '../util'
+const {certificate, createLogger, elbv2} = require('../util')
 
-export const PROTOCOLS = keyMirror({
+const PROTOCOLS = keyMirror({
   HTTP: null,
   HTTPS: null,
 })
 
-export default function listenerFactory (options = {}) {
+function listenerFactory (options = {}) {
   const {
     getDefaultTargetGroupArn,
     getLoadBalancerArn,
@@ -61,3 +61,7 @@ export default function listenerFactory (options = {}) {
     getArn,
   }
 }
+
+listenerFactory.PROTOCOLS = PROTOCOLS
+
+module.exports = listenerFactory

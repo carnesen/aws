@@ -1,14 +1,14 @@
-import keyMirror from 'keymirror'
-import Promise from 'bluebird'
+const keyMirror = require('keymirror')
+const Promise = require('bluebird')
 
-import createLogger from './createLogger'
-import {iam} from './sdkClients'
+const {createLogger} = require('./logging')
+const {iam} = require('./sdkClients')
 
 const CODES = keyMirror({
   NoSuchEntity: null,
 })
 
-export default function roleFactory ({name, trustedService, policyArn}) {
+module.exports = function roleFactory ({name, trustedService, policyArn}) {
   const log = createLogger('IAM role', name)
 
   async function getArn () {

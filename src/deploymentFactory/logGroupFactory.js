@@ -1,6 +1,6 @@
-import {createLogger, cwl} from '../util'
+const {createLogger, cwl} = require('../util')
 
-export default function logGroupFactory ({name}) {
+module.exports = function logGroupFactory ({name}) {
   const log = createLogger('Log group', name)
 
   async function getArn () {

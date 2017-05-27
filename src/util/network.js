@@ -1,7 +1,7 @@
-import keyMirror from 'keymirror'
+const keyMirror = require('keymirror')
 
-import createLogger from './createLogger'
-import {ec2} from './sdkClients'
+const {createLogger} = require('./logging')
+const {ec2} = require('./sdkClients')
 
 const log = createLogger('VPC network', 'default')
 
@@ -77,7 +77,7 @@ async function openPorts () {
   await openPort(443) // https
 }
 
-export default {
+module.exports = {
   getId,
   getSecurityGroupId,
   getSubnetIds,

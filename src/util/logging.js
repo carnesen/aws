@@ -1,8 +1,8 @@
-export function echo (...args) {
+function echo (...args) {
   console.log(...args) // eslint-disable-line no-console
 }
 
-export function createLogger (description, fullName) {
+function createLogger (description, fullName) {
   function createLog (...args) {
     return function (...extraArgs) {
       echo(`${description} "${fullName}":`, ...args, ...extraArgs)
@@ -19,4 +19,9 @@ export function createLogger (description, fullName) {
   log.alreadyDestroyed = createLog('Does not exist')
 
   return log
+}
+
+module.exports = {
+  echo,
+  createLogger,
 }

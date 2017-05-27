@@ -1,4 +1,4 @@
-import network from '../network'
+const network = require('../network')
 
 describe(__filename, function () {
   it('does the right thing', async function () {

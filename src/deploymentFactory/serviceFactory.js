@@ -1,7 +1,7 @@
-import {CONTAINER_NAME, CONTAINER_PORT} from '../constants'
-import {createLogger, ecs} from '../util'
+const {CONTAINER_NAME, CONTAINER_PORT} = require('../constants')
+const {createLogger, ecs} = require('../util')
 
-export default function serviceFactory ({clusterName, getServiceRoleArn, getTaskDefinitionId, getTargetGroupArn, name}) {
+module.exports = function serviceFactory ({clusterName, getServiceRoleArn, getTaskDefinitionId, getTargetGroupArn, name}) {
   const log = createLogger(`ECS cluster "${clusterName}" service`, name)
 
   async function create () {

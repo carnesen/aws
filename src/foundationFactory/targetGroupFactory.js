@@ -1,12 +1,12 @@
-import keyMirror from 'keymirror'
+const keyMirror = require('keymirror')
 
-import {createLogger, elbv2, network} from '../util'
+const {createLogger, elbv2, network} = require('../util')
 
 const CODES = keyMirror({
   TargetGroupNotFound: null,
 })
 
-export default function targetGroupFactory ({name}) {
+module.exports = function targetGroupFactory ({name}) {
   const log = createLogger('Target group', name)
 
   async function getArn () {

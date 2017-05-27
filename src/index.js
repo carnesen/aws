@@ -1,2 +1,4 @@
-export {default as deploymentFactory} from './deploymentFactory'
-export {run} from './util'
+module.exports = {
+  deploymentFactory: require('./deploymentFactory'),
+  run: require('./util').run,
+}
