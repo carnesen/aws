@@ -2,6 +2,7 @@
   "name": "@carnesen/aws",
   "description": "Source code for deploying to AWS",
   "version": "0.0.4",
+  "private": true,
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint src",
@@ -23,18 +24,5 @@
     "eslint": "3.19.0",
     "eslint-config-carnesen": "1.0.6",
     "mocha": "3.3.0"
-  },
-  "author": {
-    "name": "Chris Arnesen",
-    "email": "chris.arnesen@gmail.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/carnesen/aws.git"
-  },
-  "bugs": {
-    "url": "https://github.com/carnesen/aws/issues"
-  },
-  "homepage": "https://github.com/carnesen/aws",
-  "license": "MIT"
+  }
 }
