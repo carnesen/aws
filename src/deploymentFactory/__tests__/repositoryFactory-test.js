@@ -7,7 +7,7 @@ const packageDir = path.join(__dirname, 'test-package')
 
 describe(__filename, function () {
   it('does the right thing', async function () {
-    const repository = repositoryFactory({packageDir})
+    const repository = repositoryFactory({environmentName: 'foo', packageDir})
     await repository.destroy()
     let uri
     uri = await repository.getUri()

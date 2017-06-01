@@ -1,5 +1,9 @@
 'use strict'
+const {run, getGitHash} = require('./util')
+
 module.exports = {
   deploymentFactory: require('./deploymentFactory'),
-  run: require('./util').run,
+  foundationFactory: require('./foundationFactory'),
+  getGitHash,
+  run,
 }

@@ -5,9 +5,8 @@ const instanceProfileFactory = require('./instanceProfileFactory')
 const keyPairFactory = require('./keyPairFactory')
 const listenerFactory = require('./listenerFactory')
 const loadBalancerFactory = require('./loadBalancerFactory')
-const targetGroupFactory = require('./targetGroupFactory')
 
-const {getEnvironmentName, roleFactory} = require('../util')
+const {getEnvironmentName, roleFactory, refuseToDestroy, targetGroupFactory} = require('../util')
 
 const {PROTOCOLS} = listenerFactory
 
@@ -40,7 +39,6 @@ module.exports = function foundationFactory (options = {}) {
   })
 
   async function create () {
-    console.log('asd')
     await serviceRole.create()
     await cluster.create()
     await instanceProfile.create()
@@ -53,6 +51,7 @@ module.exports = function foundationFactory (options = {}) {
   }
 
   async function destroy () {
+    refuseToDestroy(environmentName)
     await loadBalancer.destroy() // destroys listeners too
     await defaultTargetGroup.destroy()
     await instance.destroy()
@@ -67,6 +66,7 @@ module.exports = function foundationFactory (options = {}) {
     create,
     destroy,
     getDefaultTargetGroupArn: defaultTargetGroup.getArn,
+    getHttpsListenerArn: httpsListener.getArn,
     getServiceRoleArn: serviceRole.getArn,
   }
 }

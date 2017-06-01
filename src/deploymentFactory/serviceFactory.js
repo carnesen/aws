@@ -41,17 +41,19 @@ module.exports = function serviceFactory ({clusterName, getServiceRoleArn, getTa
         deploymentConfiguration: {
           maximumPercent: 200,
           minimumHealthyPercent: 100,
-          role: serviceRoleArn,
-          loadBalancers: [{
-            targetGroupArn,
-            containerPort: CONTAINER_PORT,
-            containerName: CONTAINER_NAME,
-          }],
         },
+        loadBalancers: [{
+          targetGroupArn,
+          containerPort: CONTAINER_PORT,
+          containerName: CONTAINER_NAME,
+        }],
+        role: serviceRoleArn,
       })
       log.created()
     }
   }
+
+  // TODO: destroy service
 
   return {
     create,

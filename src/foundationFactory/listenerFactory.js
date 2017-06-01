@@ -22,11 +22,11 @@ function listenerFactory (options = {}) {
     let arn
     const loadBalancerArn = await getLoadBalancerArn()
     const {Listeners} = await elbv2.describeListenersAsync({LoadBalancerArn: loadBalancerArn})
-    const filteredListeners = Listeners.filter(function ({Protocol}) {
+    const listener = Listeners.find(function ({Protocol}) {
       return Protocol === protocol
     })
-    if (filteredListeners.length > 0) {
-      arn = Listeners[0].ListenerArn
+    if (listener) {
+      arn = listener.ListenerArn
     }
     return arn
   }

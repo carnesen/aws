@@ -2,12 +2,6 @@
 const {CONTAINER_NAME, CONTAINER_PORT, REGION} = require('../constants')
 const {createLogger, ecs} = require('../util')
 
-function getRandomUid () {
-  const min = 1000000
-  const max = 4000000
-  return Math.floor(Math.random() * (max - min)) + min
-}
-
 module.exports = function taskDefinitionFactory (options = {}) {
   const {
     name,
@@ -20,7 +14,7 @@ module.exports = function taskDefinitionFactory (options = {}) {
   async function create () {
     const imageName = await getImageName()
     log.creating()
-    const {taskDefinition: {revision}} = ecs.registerTaskDefinitionAsync({
+    const {taskDefinition: {revision}} = await ecs.registerTaskDefinitionAsync({
       containerDefinitions: [{
         cpu: 0,
         environment: [
@@ -41,12 +35,11 @@ module.exports = function taskDefinitionFactory (options = {}) {
         },
         memory: 100, // hard limit in MB
         name: CONTAINER_NAME,
-        portMappings: {
+        portMappings: [{
           containerPort: CONTAINER_PORT,
           hostPort: 0,
           protocol: 'tcp',
-        },
-        user: getRandomUid(),
+        }],
       }],
       family: name,
       networkMode: 'bridge',

@@ -1,7 +1,9 @@
 'use strict'
 const keyMirror = require('keymirror')
 
-const {createLogger, elbv2, network} = require('../util')
+const {createLogger} = require('./logging')
+const network = require('./network')
+const {elbv2} = require('./sdkClients')
 
 const CODES = keyMirror({
   TargetGroupNotFound: null,

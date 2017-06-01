@@ -2,35 +2,34 @@
 const childProcess = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const {promisify} = require('util')
 
 const keyMirror = require('keymirror')
-const Promise = require('bluebird')
 
-const {createLogger, ecr} = require('../util')
+const {createLogger, getGitHash, ecr} = require('../util')
+
+const execFile = promisify(childProcess.execFile)
 
 const CODES = keyMirror({
   ImageNotFoundException: null,
   RepositoryNotFoundException: null,
 })
 
-module.exports = function repositoryFactory ({packageDir}) {
+module.exports = function repositoryFactory (options) {
+  const {environmentName, packageDir} = options
   const jsonFile = path.join(packageDir, 'package.json')
-  const {name, scripts} = JSON.parse(fs.readFileSync(jsonFile, {encoding: 'utf8'}))
+  const {name: packageName, scripts} = JSON.parse(fs.readFileSync(jsonFile, {encoding: 'utf8'}))
 
-  const gitHash = childProcess.execFileSync(
-    'git',
-    ['rev-parse', '--short=10', 'HEAD'],
-    {cwd: packageDir, encoding: 'utf8'}
-  ).replace(/\n/g, '')
+  const name = `${environmentName}-${packageName}`
+  const gitHash = getGitHash()
 
   const localImageName = `${name}:${gitHash}`
 
-  const log = createLogger('package', name)
+  const log = createLogger('Repository', name)
 
   async function docker (...args) {
     log(`Running "docker ${args.join(' ')}"`)
-    const execFile = Promise.promisify(childProcess.execFile)
-    const stdout = await execFile('docker', args, {cwd: packageDir})
+    const {stdout} = await execFile('docker', args, {cwd: packageDir})
     return stdout.replace(/\n$/, '')
   }
 
@@ -75,7 +74,7 @@ module.exports = function repositoryFactory ({packageDir}) {
   }
 
   async function buildImage (options = {}) {
-    const { force = false } = options
+    const {force = false} = options
     log(`buildImage called with force=${force}`)
 
     const imageId = await docker('images', '--quiet', localImageName)
@@ -93,7 +92,7 @@ module.exports = function repositoryFactory ({packageDir}) {
     if (shouldBuild) {
       if (scripts && scripts.build) {
         log('Running "npm run build" ...')
-        await childProcess.execFile('npm', ['run', 'build'], {cwd: packageDir})
+        await execFile('npm', ['run', 'build'], {cwd: packageDir})
       }
       await docker('build', '--quiet', '--no-cache', '--tag', `${name}:${gitHash}`, '.')
     }
@@ -144,8 +143,8 @@ module.exports = function repositoryFactory ({packageDir}) {
     buildImage,
     create,
     destroy,
+    packageName,
     getUri,
-    name,
     pushImage,
   }
 }
