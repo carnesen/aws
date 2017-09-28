@@ -36,11 +36,11 @@ module.exports = function websiteFactory (options = {}) {
   async function create () {
     await s3Bucket.create()
     await s3Bucket.makeWorldReadable()
-    await s3Bucket.sync({localPath})
     if (pkg.scripts && pkg.scripts.build) {
       log('Running "npm run build" ...')
       await execFile('npm', ['run', 'build'], {cwd: packageDir})
     }
+    await s3Bucket.sync({localPath})
     await distribution.create()
   }
 
