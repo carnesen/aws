@@ -1,14 +1,7 @@
 'use strict'
-const childProcess = require('child_process')
-const fs = require('fs')
-const path = require('path')
-const {promisify} = require('util')
-
 const keyMirror = require('keymirror')
 
-const {createLogger, getGitHash, ecr} = require('../util')
-
-const execFile = promisify(childProcess.execFile)
+const {createLogger, getGitHash, ecr, execFile, packageFactory} = require('../util')
 
 const CODES = keyMirror({
   ImageNotFoundException: null,
@@ -17,8 +10,8 @@ const CODES = keyMirror({
 
 module.exports = function repositoryFactory (options) {
   const {environmentName, packageDir} = options
-  const jsonFile = path.join(packageDir, 'package.json')
-  const {name: packageName, scripts} = JSON.parse(fs.readFileSync(jsonFile, {encoding: 'utf8'}))
+  const pkg = packageFactory({dir: packageDir})
+  const {name: packageName, scripts} = pkg
 
   const name = `${environmentName}-${packageName}`
   const gitHash = getGitHash()

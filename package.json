@@ -13,16 +13,17 @@
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
-    "aws-sdk": "2.48.0",
+    "aws-sdk": "2.122.0",
     "bluebird": "3.5.0",
     "expand-home-dir": "0.0.3",
-    "fs-extra": "3.0.0",
+    "fs-extra": "4.0.2",
     "keymirror": "0.1.1"
   },
   "devDependencies": {
-    "chai": "3.5.0",
-    "eslint": "3.19.0",
-    "eslint-config-carnesen": "1.0.6",
-    "mocha": "3.3.0"
+    "chai": "4.1.2",
+    "eslint": "4.7.2",
+    "eslint-config-carnesen": "^1.0.8",
+    "eslint-plugin-node": "5.1.1",
+    "mocha": "3.5.3"
   }
 }

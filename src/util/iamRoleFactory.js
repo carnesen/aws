@@ -3,7 +3,7 @@ const keyMirror = require('keymirror')
 const Promise = require('bluebird')
 
 const {createLogger} = require('./logging')
-const {iam} = require('./sdkClients')
+const {iam} = require('./awsSdkClients')
 
 const CODES = keyMirror({
   NoSuchEntity: null,

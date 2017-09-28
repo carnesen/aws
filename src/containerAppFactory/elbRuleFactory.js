@@ -1,10 +1,10 @@
 'use strict'
 const {createLogger, elbv2} = require('../util')
 
-module.exports = function ruleFactory (options = {}) {
+module.exports = function elbRuleFactory (options = {}) {
   const {
-    getListenerArn,
-    getTargetGroupArn,
+    getElbListenerArn,
+    getElbTargetGroupArn,
     hostHeader,
     priority,
   } = options
@@ -13,7 +13,7 @@ module.exports = function ruleFactory (options = {}) {
 
   async function getArn () {
     let arn
-    const listenerArn = await getListenerArn()
+    const listenerArn = await getElbListenerArn()
     if (!listenerArn) {
       throw new Error('Failed to get listener arn')
     } else {
@@ -38,8 +38,8 @@ module.exports = function ruleFactory (options = {}) {
     if (arn) {
       log.alreadyCreated()
     } else {
-      const TargetGroupArn = await getTargetGroupArn()
-      const ListenerArn = await getListenerArn()
+      const TargetGroupArn = await getElbTargetGroupArn()
+      const ListenerArn = await getElbListenerArn()
       await elbv2.createRuleAsync({
         Actions: [{
           TargetGroupArn,

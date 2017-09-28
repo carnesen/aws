@@ -2,7 +2,7 @@
 const Promise = require('bluebird')
 const keyMirror = require('keymirror')
 
-const {createLogger, iam, roleFactory} = require('../util')
+const {createLogger, iam, iamRoleFactory} = require('../util')
 
 const CODES = keyMirror({
   LimitExceeded: null,
@@ -12,7 +12,7 @@ const CODES = keyMirror({
 module.exports = function instanceProfileFactory ({name}) {
   const log = createLogger('EC2 instance profile', name)
 
-  const role = roleFactory({
+  const role = iamRoleFactory({
     name,
     trustedService: 'ec2.amazonaws.com',
     policyArn: 'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role',

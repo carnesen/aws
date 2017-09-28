@@ -1,3 +1,7 @@
 {
-  "extends": [ "carnesen" ]
+  "extends": [ "carnesen" ],
+  "plugins": [ "node" ],
+  "rules": {
+    "node/no-missing-require": 2
+  }
 }

@@ -2,8 +2,8 @@
 const keyMirror = require('keymirror')
 
 const {createLogger} = require('./logging')
-const network = require('./network')
-const {elbv2} = require('./sdkClients')
+const vpcNetwork = require('./vpcNetwork')
+const {elbv2} = require('./awsSdkClients')
 
 const CODES = keyMirror({
   TargetGroupNotFound: null,
@@ -31,7 +31,7 @@ module.exports = function targetGroupFactory ({name}) {
     if (arn) {
       log.alreadyCreated()
     } else {
-      const vpcId = await network.getId()
+      const vpcId = await vpcNetwork.getId()
       await elbv2.createTargetGroupAsync({
         Name: name,
         Protocol: 'HTTP',

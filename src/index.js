@@ -2,8 +2,9 @@
 const {run, getGitHash} = require('./util')
 
 module.exports = {
-  deploymentFactory: require('./deploymentFactory'),
+  containerAppFactory: require('./containerAppFactory'),
   foundationFactory: require('./foundationFactory'),
+  websiteFactory: require('./websiteFactory'),
   getGitHash,
   run,
 }

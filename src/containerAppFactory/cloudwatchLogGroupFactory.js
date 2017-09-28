@@ -1,12 +1,12 @@
 'use strict'
-const {createLogger, cwl} = require('../util')
+const {createLogger, cloudwatchLogs} = require('../util')
 
-module.exports = function logGroupFactory ({name}) {
+module.exports = function cloudwatchLogGroupFactory ({name}) {
   const log = createLogger('Log group', name)
 
   async function getArn () {
     let arn
-    const {logGroups} = await cwl.describeLogGroupsAsync({logGroupNamePrefix: name})
+    const {logGroups} = await cloudwatchLogs.describeLogGroupsAsync({logGroupNamePrefix: name})
     if (logGroups[0]) {
       arn = logGroups[0].arn
     }
@@ -19,7 +19,7 @@ module.exports = function logGroupFactory ({name}) {
     if (arn) {
       log.alreadyCreated()
     } else {
-      await cwl.createLogGroupAsync({logGroupName: name})
+      await cloudwatchLogs.createLogGroupAsync({logGroupName: name})
       log.created()
     }
   }
@@ -30,7 +30,7 @@ module.exports = function logGroupFactory ({name}) {
     if (!arn) {
       log.alreadyDestroyed()
     } else {
-      await cwl.deleteLogGroupAsync({logGroupName: name})
+      await cloudwatchLogs.deleteLogGroupAsync({logGroupName: name})
       log.destroyed()
     }
   }

@@ -1,72 +1,72 @@
 'use strict'
-const clusterFactory = require('./clusterFactory')
-const instanceFactory = require('./instanceFactory')
-const instanceProfileFactory = require('./instanceProfileFactory')
-const keyPairFactory = require('./keyPairFactory')
-const listenerFactory = require('./listenerFactory')
-const loadBalancerFactory = require('./loadBalancerFactory')
+const ecsClusterFactory = require('./ecsClusterFactory')
+const ec2InstanceFactory = require('./ec2InstanceFactory')
+const instanceProfileFactory = require('./ec2InstanceProfileFactory')
+const ec2KeyPairFactory = require('./ec2KeyPairFactory')
+const elbListenerFactory = require('./elbListenerFactory')
+const elbLoadBalancerFactory = require('./elbLoadBalancerFactory')
 
-const {getEnvironmentName, roleFactory, refuseToDestroy, targetGroupFactory} = require('../util')
+const {getEnvironmentName, iamRoleFactory, refuseToDestroy, elbTargetGroupFactory} = require('../util')
 
-const {PROTOCOLS} = listenerFactory
+const {PROTOCOLS} = elbListenerFactory
 
 module.exports = function foundationFactory (options = {}) {
   const {environmentName = getEnvironmentName()} = options
-  const cluster = clusterFactory({name: environmentName})
-  const instanceProfile = instanceProfileFactory({name: environmentName})
-  const keyPair = keyPairFactory({name: environmentName})
-  const instance = instanceFactory({
-    clusterName: cluster.name,
-    getInstanceProfileArn: instanceProfile.getArn,
-    keyPairName: keyPair.name,
+  const ecsCluster = ecsClusterFactory({name: environmentName})
+  const ec2InstanceProfile = instanceProfileFactory({name: environmentName})
+  const ec2KeyPair = ec2KeyPairFactory({name: environmentName})
+  const ec2Instance = ec2InstanceFactory({
+    ecsClusterName: ecsCluster.name,
+    getEc2InstanceProfileArn: ec2InstanceProfile.getArn,
+    ec2KeyPairName: ec2KeyPair.name,
     name: environmentName,
   })
-  const loadBalancer = loadBalancerFactory({name: environmentName})
-  const defaultTargetGroup = targetGroupFactory({name: `${environmentName}-default`})
-  const [httpListener, httpsListener] = [PROTOCOLS.HTTP, PROTOCOLS.HTTPS].map(function (protocol) {
-    return listenerFactory({
-      getDefaultTargetGroupArn: defaultTargetGroup.getArn,
-      getLoadBalancerArn: loadBalancer.getArn,
+  const elbLoadBalancer = elbLoadBalancerFactory({name: environmentName})
+  const defaultElbTargetGroup = elbTargetGroupFactory({name: `${environmentName}-default`})
+  const [httpElbListener, httpsElbListener] = [PROTOCOLS.HTTP, PROTOCOLS.HTTPS].map(function (protocol) {
+    return elbListenerFactory({
+      getDefaultElbTargetGroupArn: defaultElbTargetGroup.getArn,
+      getElbLoadBalancerArn: elbLoadBalancer.getArn,
       name: `${environmentName}-${protocol.toLowerCase()}`,
       protocol,
     })
   })
 
-  const serviceRole = roleFactory({
+  const iamServiceRole = iamRoleFactory({
     name: `${environmentName}-container-service`,
     trustedService: 'ecs.amazonaws.com',
     policyArn: 'arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole',
   })
 
   async function create () {
-    await serviceRole.create()
-    await cluster.create()
-    await instanceProfile.create()
-    await keyPair.create()
-    await instance.create()
-    await loadBalancer.create()
-    await defaultTargetGroup.create()
-    await httpListener.create()
-    await httpsListener.create()
+    await iamServiceRole.create()
+    await ecsCluster.create()
+    await ec2InstanceProfile.create()
+    await ec2KeyPair.create()
+    await ec2Instance.create()
+    await elbLoadBalancer.create()
+    await defaultElbTargetGroup.create()
+    await httpElbListener.create()
+    await httpsElbListener.create()
   }
 
   async function destroy () {
     refuseToDestroy(environmentName)
-    await loadBalancer.destroy() // destroys listeners too
-    await defaultTargetGroup.destroy()
-    await instance.destroy()
-    await keyPair.destroy()
-    await instanceProfile.destroy()
-    await cluster.destroy()
-    await serviceRole.destroy()
+    await elbLoadBalancer.destroy() // destroys elbListeners too
+    await defaultElbTargetGroup.destroy()
+    await ec2Instance.destroy()
+    await ec2KeyPair.destroy()
+    await ec2InstanceProfile.destroy()
+    await ecsCluster.destroy()
+    await iamServiceRole.destroy()
   }
 
   return {
-    clusterName: cluster.name,
+    ecsClusterName: ecsCluster.name,
     create,
     destroy,
-    getDefaultTargetGroupArn: defaultTargetGroup.getArn,
-    getHttpsListenerArn: httpsListener.getArn,
-    getServiceRoleArn: serviceRole.getArn,
+    getDefaultElbTargetGroupArn: defaultElbTargetGroup.getArn,
+    getHttpsElbListenerArn: httpsElbListener.getArn,
+    getIamServiceRoleArn: iamServiceRole.getArn,
   }
 }

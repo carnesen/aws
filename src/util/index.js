@@ -1,15 +1,18 @@
 'use strict'
 const childProcess = require('child_process')
+const util = require('util')
 
 const Promise = require('bluebird')
 const {BRANCH_NAME_MAP, ENVIRONMENT_NAMES} = require('../constants')
 
 module.exports = {
-  fs: Promise.promisifyAll(require('fs-extra')),
-  certificate: require('./certificate'),
+  acmCertificate: require('./acmCertificate'),
+  elbTargetGroupFactory: require('./elbTargetGroupFactory'),
   encodeBase64 (str) {
     return Buffer.from(str).toString('base64')
   },
+  execFile: util.promisify(childProcess.execFile),
+  fs: Promise.promisifyAll(require('fs-extra')),
   getEnvironmentName () {
     let environmentName
     if (process.env.NODE_ENV === 'test') {
@@ -32,16 +35,16 @@ module.exports = {
       {encoding: 'utf8'}
     ).replace(/\n/g, '')
   },
-  network: require('./network'),
+  iamRoleFactory: require('./iamRoleFactory'),
+  packageFactory: require('./packageFactory'),
   refuseToDestroy (environmentName) {
     if (environmentName === ENVIRONMENT_NAMES.prod && process.env.FORCE !== 'true') {
-      throw new Error(`Refusing to destroy ${ENVIRONMENT_NAMES.prod} unless FORCE=="true"`)
+      throw new Error(`Refusing to destroy ${ENVIRONMENT_NAMES.prod} unless FORCE is "true"`)
     }
   },
-  roleFactory: require('./roleFactory'),
   run: require('./run'),
-  targetGroupFactory: require('./targetGroupFactory'),
+  vpcNetwork: require('./vpcNetwork'),
 }
 
 Object.assign(module.exports, require('./logging'))
-Object.assign(module.exports, require('./sdkClients'))
+Object.assign(module.exports, require('./awsSdkClients'))

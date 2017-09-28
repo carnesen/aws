@@ -1,7 +1,7 @@
 'use strict'
 const keyMirror = require('keymirror')
 
-const {certificate, createLogger, elbv2} = require('../util')
+const {acmCertificate, createLogger, elbv2} = require('../util')
 
 const PROTOCOLS = keyMirror({
   HTTP: null,
@@ -10,8 +10,8 @@ const PROTOCOLS = keyMirror({
 
 function listenerFactory (options = {}) {
   const {
-    getDefaultTargetGroupArn,
-    getLoadBalancerArn,
+    getDefaultElbTargetGroupArn,
+    getElbLoadBalancerArn,
     name,
     protocol,
   } = options
@@ -20,8 +20,8 @@ function listenerFactory (options = {}) {
 
   async function getArn () {
     let arn
-    const loadBalancerArn = await getLoadBalancerArn()
-    const {Listeners} = await elbv2.describeListenersAsync({LoadBalancerArn: loadBalancerArn})
+    const elbLoadBalancerArn = await getElbLoadBalancerArn()
+    const {Listeners} = await elbv2.describeListenersAsync({LoadBalancerArn: elbLoadBalancerArn})
     const listener = Listeners.find(function ({Protocol}) {
       return Protocol === protocol
     })
@@ -32,8 +32,8 @@ function listenerFactory (options = {}) {
   }
 
   async function create () {
-    const loadBalancerArn = await getLoadBalancerArn()
-    const defaultTargetGroupArn = await getDefaultTargetGroupArn()
+    const loadBalancerArn = await getElbLoadBalancerArn()
+    const defaultElbTargetGroupArn = await getDefaultElbTargetGroupArn()
     log.creating()
     const arn = await getArn()
     if (arn) {
@@ -44,10 +44,10 @@ function listenerFactory (options = {}) {
         LoadBalancerArn: loadBalancerArn,
         Protocol: protocol,
         Port: protocol === PROTOCOLS.HTTPS ? 443 : 80,
-        DefaultActions: [{Type: 'forward', TargetGroupArn: defaultTargetGroupArn}],
+        DefaultActions: [{Type: 'forward', TargetGroupArn: defaultElbTargetGroupArn}],
       }
       if (protocol === PROTOCOLS.HTTPS) {
-        const certificateArn = await certificate.getArn()
+        const certificateArn = await acmCertificate.getArn()
         params.Certificates = [{CertificateArn: certificateArn}]
       }
       await elbv2.createListenerAsync(params)

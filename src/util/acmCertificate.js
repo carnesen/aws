@@ -1,6 +1,6 @@
 'use strict'
 const {DOMAIN_NAME} = require('../constants')
-const {acm} = require('./sdkClients')
+const {acm} = require('./awsSdkClients')
 
 async function getArn () {
   const {CertificateSummaryList} = await acm.listCertificatesAsync()

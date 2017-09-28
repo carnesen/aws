@@ -15,10 +15,11 @@ function createLogger (description, fullName) {
   log.creating = createLog('Creating...')
   log.created = createLog('Created')
   log.alreadyCreated = createLog('Already exists')
+  log.maybeCreated = createLog('Maybe created')
   log.destroying = createLog('Destroying...')
   log.destroyed = createLog('Destroyed')
   log.alreadyDestroyed = createLog('Does not exist')
-
+  log.maybeDestroyed = createLog('Maybe destroyed')
   return log
 }
 

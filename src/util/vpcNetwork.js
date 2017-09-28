@@ -2,7 +2,7 @@
 const keyMirror = require('keymirror')
 
 const {createLogger} = require('./logging')
-const {ec2} = require('./sdkClients')
+const {ec2} = require('./awsSdkClients')
 
 const log = createLogger('VPC network', 'default')
 

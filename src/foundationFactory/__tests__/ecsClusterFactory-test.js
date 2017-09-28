@@ -1,9 +1,9 @@
 'use strict'
-const clusterFactory = require('../clusterFactory')
+const ecsClusterFactory = require('../ecsClusterFactory')
 
 describe(__filename, function () {
   it('does the right thing', async function () {
-    const cluster = clusterFactory({name: 'foo'})
+    const cluster = ecsClusterFactory({name: 'foo'})
     await cluster.destroy()
     let arn
     arn = await cluster.getArn()

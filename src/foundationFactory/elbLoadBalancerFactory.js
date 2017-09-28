@@ -1,8 +1,7 @@
 'use strict'
-const Promise = require('bluebird')
 const keyMirror = require('keymirror')
 
-const {createLogger, elbv2, network} = require('../util')
+const {createLogger, elbv2, vpcNetwork} = require('../util')
 
 const CODES = keyMirror({
   LoadBalancerNotFound: null,
@@ -40,7 +39,7 @@ module.exports = function loadBalancerFactory ({name}) {
     if (description) {
       log.alreadyCreated()
     } else {
-      const subnetIds = await network.getSubnetIds()
+      const subnetIds = await vpcNetwork.getSubnetIds()
       await elbv2.createLoadBalancerAsync({
         Name: name,
         Subnets: subnetIds,

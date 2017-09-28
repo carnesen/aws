@@ -2,14 +2,21 @@
 const {CONTAINER_NAME, CONTAINER_PORT} = require('../constants')
 const {createLogger, ecs} = require('../util')
 
-module.exports = function serviceFactory ({clusterName, getServiceRoleArn, getTaskDefinitionId, getTargetGroupArn, name}) {
-  const log = createLogger(`ECS cluster "${clusterName}" service`, name)
+module.exports = function ecsServiceFactory (options) {
+  const {
+    ecsClusterName,
+    getIamServiceRoleArn,
+    getEcsTaskDefinitionId,
+    getElbTargetGroupArn,
+    name,
+  } = options
+  const log = createLogger(`ECS cluster "${ecsClusterName}" service`, name)
 
   async function create () {
     let services = []
     try {
       const data = await ecs.describeServicesAsync({
-        cluster: clusterName,
+        cluster: ecsClusterName,
         services: [name],
       })
       services = data.services
@@ -19,11 +26,11 @@ module.exports = function serviceFactory ({clusterName, getServiceRoleArn, getTa
         throw ex
       }
     }
-    const taskDefinitionId = await getTaskDefinitionId()
+    const taskDefinitionId = await getEcsTaskDefinitionId()
     if (services.length > 0 && services[0].status === 'ACTIVE') {
       log(`Updating to task definition "${taskDefinitionId}"...`)
       await ecs.updateServiceAsync({
-        cluster: clusterName,
+        cluster: ecsClusterName,
         service: name,
         taskDefinition: taskDefinitionId,
         desiredCount: 1,
@@ -31,13 +38,13 @@ module.exports = function serviceFactory ({clusterName, getServiceRoleArn, getTa
       log('Updated task definition')
     } else {
       log.creating()
-      const targetGroupArn = await getTargetGroupArn()
-      const serviceRoleArn = await getServiceRoleArn()
+      const targetGroupArn = await getElbTargetGroupArn()
+      const serviceRoleArn = await getIamServiceRoleArn()
       await ecs.createServiceAsync({
         desiredCount: 1,
         serviceName: name,
         taskDefinition: taskDefinitionId,
-        cluster: clusterName,
+        cluster: ecsClusterName,
         deploymentConfiguration: {
           maximumPercent: 200,
           minimumHealthyPercent: 100,
